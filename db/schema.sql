@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS courses_db;
-CREATE DATABASE courses_db;
+DROP DATABASE IF EXISTS employees;
+CREATE DATABASE employees;
 
-USE courses_db;
+USE employees;
 
 CREATE TABLE department (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -23,10 +23,10 @@ CREATE TABLE employee (
   first_name VARCHAR(30) NOT NULL,
   last_name VARCHAR(30) NOT NULL,
   role_id INT,
-  FOREIGN KEY (roles)
+  FOREIGN KEY (role_id)
   REFERENCES roles(id)
-  ON DELETE SET NULL
+  ON DELETE SET NULL,
   manager_id INT,
-  FOREIGN KEY (employee)
+  FOREIGN KEY (manager_id)
   REFERENCES employee(id)
 );
