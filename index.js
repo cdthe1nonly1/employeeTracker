@@ -1,12 +1,12 @@
 const { prompt } = require("inquirer");
 const db = require("./db");
+//pulled varible out function
+let employeeId;
 //require("console.table");
 
+loadMainPrompts();
 
-
-  loadMainPrompts();
-
-
+//load the main prompts with options
 function loadMainPrompts() {
   prompt([
     {
@@ -139,7 +139,7 @@ function addRole() {
     prompt([
       {
         name: "title",
-        message: "What is the name of the role?",
+        message: "What is the name of the role?", 
       },
       {
         name: "salary",
@@ -147,7 +147,7 @@ function addRole() {
       },
       {
         type: "list",
-        name: "department_id",
+        name: "department",
         message: "Which department does the role belong to?",
         choices: departmentChoices,
       },
@@ -160,13 +160,6 @@ function addRole() {
 }
 //Add a employee
 function addEmployee() {
-  db.findAllDepartments().then(([rows]) => {
-    let roles = rows;
-    const roleChoices = roles.map(({ id, firstName, lastName }) => ({
-      firstname: firstName,
-      lastName: lastName,
-      value: id,
-    }));
 
     prompt([
       {
@@ -176,27 +169,77 @@ function addEmployee() {
       {
         name: "last_name",
         message: "What is employee's last name?",
-      },
-      {
+      }
+  
+    ])
+    .then(res => {
+      let firstName = res.first_name;
+      let lastName = res.last_name;
+
+      db.findAllRoles()
+      .then(([rows]) => {
+        let roles = rows;
+        const roleChoices = roles.map(({ id, title }) => ({
+          name: title,
+          value: id
+        }));
+
+        prompt({
         type: "list",
-        name: "department_id",
-        message: "What roled does the employee belong to?",
+        name: "title",
+        message: "What role does the employee belong to?",
         choices: roleChoices,
-      },
-    ]).then((role) => {
-      db.createRole(role)
-        .then(() => console.log(`Added ${role.title} to the database`))
-        .then(() => loadMainPrompts());
-    });
-  });
-}
+      })
+
+ 
+        .then(res => {
+          let roleId = res.roleId;
+          
+          db.findAllEmployees()
+          .then(([rows])=> {
+            let employees = rows;
+            const managerChoices = employees.map(
+              ({ id, first_name, last_name }) => ({
+                name: `${first_name} ${last_name}`,
+                value: id
+              }));
+              managerChoices.unshift({name: "None", value: null});
+              prompt({
+                type: "list",
+                name: "managerId",
+                message: "Who is the employee's manager?",
+                choices: managerChoices
+              })
+              .then(res => {
+                let employee = {
+                  manager_id: res.managerId,
+                  roles_id: roleId,
+                  first_name: firstName,
+                  last_name: lastName,
+                };
+
+                db.createEmployee(employee)
+                  .then(() =>
+                    console.log(
+                      `Added ${employee.first_name} ${employee.last_name} to the database`
+                    )
+                  )
+                  .then(() => loadMainPrompts());
+              })
+          })
+        })
+      })
+    })
+  }
+
 // Update an employee's role
 function updateEmployeeRole() {
   db.findAllEmployees().then(([rows]) => {
     let employees = rows;
+    //console.log(employees)
     const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
       name: `${first_name} ${last_name}`,
-      value: id,
+      value: id
     }));
 
     prompt([
@@ -207,7 +250,8 @@ function updateEmployeeRole() {
         choices: employeeChoices,
       },
     ]).then((res) => {
-      let employeeId = res.employeeId;
+      //console.log(res)
+      employeeId = res.employeeId;
       db.findAllRoles().then(([rows]) => {
         let roles = rows;
         const roleChoices = roles.map(({ id, title }) => ({
@@ -223,7 +267,8 @@ function updateEmployeeRole() {
             choices: roleChoices,
           },
         ])
-          .then((res) => db.updateEmployeeRole(employeeId, res.roleId))
+          .then((res) =>{console.log(employeeId, res.roleId)
+          db.updateEmployeeRole(employeeId, res.roleId)})
           .then(() => console.log("Updated employee's role"))
           .then(() => loadMainPrompts());
       });
