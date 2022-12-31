@@ -193,7 +193,7 @@ function addEmployee() {
 
  
         .then(res => {
-          let roleId = res.roleId;
+          let roleId = res.id;
           
           db.findAllEmployees()
           .then(([rows])=> {
