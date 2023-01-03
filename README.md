@@ -2,7 +2,7 @@
 # Employee Tracker
 
 ## Description:
-Node application to track and update employees
+Node application to track and update employees.
 
 
 ## Technologies:
@@ -14,7 +14,7 @@ link to github: https://github.com/cdthe1nonly1/employeeTracker.git
 
 link to Employee Tracker webpage: There is no application link for this as it is done in node.
 
-Video Link: https://drive.google.com/file/d/1qdH3B-1OsXEysmw3Rmpek68euhNmuolt/view
+Video walkthrough Link: https://drive.google.com/file/d/1qdH3B-1OsXEysmw3Rmpek68euhNmuolt/view
 
 ## Images:
 
